@@ -16,7 +16,7 @@ Une application moderne construite avec Next.js 15, TypeScript, Tailwind CSS, Pr
 1. **Cloner le projet** (si applicable)
    ```bash
    git clone <url-du-repo>
-   cd sport-app
+   cd strategia
    ```
 
 2. **Installer les dépendances**

@@ -52,7 +52,7 @@ export default function Home() {
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent break-words">
-            FitAI Generator
+            StrategIA
           </h1>
           <p className="text-lg sm:text-xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
             Générez vos séances de musculation personnalisées grâce à l'intelligence artificielle.

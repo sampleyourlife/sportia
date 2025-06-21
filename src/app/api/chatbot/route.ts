@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-        'X-Title': 'FitAI Coach'
+        'X-Title': 'StrategIA Coach'
       },
       body: JSON.stringify({
         model: 'qwen/qwen3-14b:free',
@@ -162,10 +162,21 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json()
+    console.log('Données reçues d\'OpenRouter:', JSON.stringify(data, null, 2))
+    
     const aiResponse = data.choices?.[0]?.message?.content
+    const reasoning = data.choices?.[0]?.message?.reasoning
+    
+    console.log('Contenu de la réponse IA:', aiResponse)
+    console.log('Reasoning de la réponse IA:', reasoning)
 
-    if (!aiResponse) {
-      console.error('Réponse IA vide:', data)
+    if (!aiResponse || aiResponse.trim() === '') {
+      console.error('Réponse IA vide ou nulle:', data)
+      // Si on a du reasoning mais pas de content, utiliser le reasoning
+      if (reasoning && reasoning.trim() !== '') {
+        console.log('Utilisation du reasoning comme réponse')
+        return NextResponse.json({ response: reasoning })
+      }
       const fallbackResponse = generateFallbackResponse(message)
       return NextResponse.json({ response: fallbackResponse })
     }

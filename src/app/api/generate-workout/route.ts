@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'HTTP-Referer': 'http://localhost:3000',
-        'X-Title': 'FitAI Generator',
+        'X-Title': 'StrategIA Generator',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       workoutData = JSON.parse(aiResponse)
     } catch (error) {
       // Si le parsing échoue, utiliser des données de fallback
-      workoutData = generateFallbackWorkout(query, workoutType)
+      workoutData = generateFallbackWorkout(query, workoutType, duration, difficulty)
     }
 
     return NextResponse.json(workoutData)
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     console.error('Error generating workout:', error)
     
     // Retourner des données de fallback en cas d'erreur
-    const fallbackData = generateFallbackWorkout('Entraînement général', 'single')
+    const fallbackData = generateFallbackWorkout('Entraînement général', 'single', '45', 'intermediate')
     return NextResponse.json(fallbackData)
   }
 }
@@ -104,6 +104,11 @@ Paramètres:
 - ${muscleText}
 
 Crée exactement 7 séances d'entraînement, une pour chaque jour de la semaine (Lundi à Dimanche). Varie les groupes musculaires et les types d'exercices pour un programme équilibré.
+
+Adapte le nombre de sets selon le niveau:
+- Débutant: 2-3 sets
+- Intermédiaire: 3-4 sets  
+- Avancé: 4-5 sets
 
 Format JSON requis:
 {
@@ -135,6 +140,11 @@ Paramètres:
 - ${equipmentText}
 - ${muscleText}
 
+Adapte le nombre de sets selon le niveau:
+- Débutant: 2-3 sets
+- Intermédiaire: 3-4 sets
+- Avancé: 4-5 sets
+
 Format JSON requis:
 {
   "workout": {
@@ -156,7 +166,23 @@ Format JSON requis:
   }
 }
 
-function generateFallbackWorkout(query: string, workoutType: 'single' | 'weekly') {
+function generateFallbackWorkout(query: string, workoutType: 'single' | 'weekly', duration: string = '45', difficulty: string = 'intermediate') {
+  // Adapter le nombre de sets selon la difficulté
+  const getBaseSets = (difficulty: string) => {
+    switch (difficulty.toLowerCase()) {
+      case 'débutant':
+      case 'beginner':
+        return 2;
+      case 'avancé':
+      case 'advanced':
+        return 4;
+      default: // intermédiaire/intermediate
+        return 3;
+    }
+  };
+
+  const baseSets = getBaseSets(difficulty);
+
   if (workoutType === 'weekly') {
     return {
       workouts: [
@@ -165,72 +191,72 @@ function generateFallbackWorkout(query: string, workoutType: 'single' | 'weekly'
           name: 'Entraînement Haut du Corps',
           day: 'Lundi',
           exercises: [
-            { name: 'Pompes', sets: 3, reps: '10-15', rest: '60s', muscle: 'Pectoraux' },
-            { name: 'Tractions', sets: 3, reps: '8-12', rest: '90s', muscle: 'Dos' },
-            { name: 'Dips', sets: 3, reps: '10-15', rest: '60s', muscle: 'Triceps' }
+            { name: 'Pompes', sets: baseSets, reps: '10-15', rest: '60s', muscle: 'Pectoraux' },
+            { name: 'Tractions', sets: baseSets, reps: '8-12', rest: '90s', muscle: 'Dos' },
+            { name: 'Dips', sets: baseSets, reps: '10-15', rest: '60s', muscle: 'Triceps' }
           ],
-          duration: '45min',
-          difficulty: 'intermediate'
+          duration: `${duration}min`,
+          difficulty: difficulty
         },
         {
           id: 'day2',
           name: 'Entraînement Bas du Corps',
           day: 'Mardi',
           exercises: [
-            { name: 'Squats', sets: 4, reps: '15-20', rest: '90s', muscle: 'Quadriceps' },
-            { name: 'Fentes', sets: 3, reps: '12 par jambe', rest: '60s', muscle: 'Fessiers' },
-            { name: 'Mollets debout', sets: 3, reps: '20-25', rest: '45s', muscle: 'Mollets' }
+            { name: 'Squats', sets: baseSets + 1, reps: '15-20', rest: '90s', muscle: 'Quadriceps' },
+            { name: 'Fentes', sets: baseSets, reps: '12 par jambe', rest: '60s', muscle: 'Fessiers' },
+            { name: 'Mollets debout', sets: baseSets, reps: '20-25', rest: '45s', muscle: 'Mollets' }
           ],
-          duration: '45min',
-          difficulty: 'intermediate'
+          duration: `${duration}min`,
+          difficulty: difficulty
         },
         {
           id: 'day3',
           name: 'Entraînement Cardio',
           day: 'Mercredi',
           exercises: [
-            { name: 'Burpees', sets: 4, reps: '10-12', rest: '90s', muscle: 'Corps entier' },
-            { name: 'Mountain Climbers', sets: 3, reps: '30s', rest: '60s', muscle: 'Core' },
-            { name: 'Jumping Jacks', sets: 3, reps: '45s', rest: '45s', muscle: 'Corps entier' }
+            { name: 'Burpees', sets: baseSets + 1, reps: '10-12', rest: '90s', muscle: 'Corps entier' },
+            { name: 'Mountain Climbers', sets: baseSets, reps: '30s', rest: '60s', muscle: 'Core' },
+            { name: 'Jumping Jacks', sets: baseSets, reps: '45s', rest: '45s', muscle: 'Corps entier' }
           ],
-          duration: '45min',
-          difficulty: 'intermediate'
+          duration: `${duration}min`,
+          difficulty: difficulty
         },
         {
           id: 'day4',
           name: 'Entraînement Épaules et Bras',
           day: 'Jeudi',
           exercises: [
-            { name: 'Développé militaire', sets: 3, reps: '10-12', rest: '90s', muscle: 'Épaules' },
-            { name: 'Curl biceps', sets: 3, reps: '12-15', rest: '60s', muscle: 'Biceps' },
-            { name: 'Extensions triceps', sets: 3, reps: '12-15', rest: '60s', muscle: 'Triceps' }
+            { name: 'Développé militaire', sets: baseSets, reps: '10-12', rest: '90s', muscle: 'Épaules' },
+            { name: 'Curl biceps', sets: baseSets, reps: '12-15', rest: '60s', muscle: 'Biceps' },
+            { name: 'Extensions triceps', sets: baseSets, reps: '12-15', rest: '60s', muscle: 'Triceps' }
           ],
-          duration: '45min',
-          difficulty: 'intermediate'
+          duration: `${duration}min`,
+          difficulty: difficulty
         },
         {
           id: 'day5',
           name: 'Entraînement Full Body',
           day: 'Vendredi',
           exercises: [
-            { name: 'Deadlifts', sets: 3, reps: '8-10', rest: '2min', muscle: 'Dos' },
-            { name: 'Squats', sets: 3, reps: '12-15', rest: '90s', muscle: 'Quadriceps' },
-            { name: 'Pompes', sets: 3, reps: '10-15', rest: '60s', muscle: 'Pectoraux' }
+            { name: 'Deadlifts', sets: baseSets, reps: '8-10', rest: '2min', muscle: 'Dos' },
+            { name: 'Squats', sets: baseSets, reps: '12-15', rest: '90s', muscle: 'Quadriceps' },
+            { name: 'Pompes', sets: baseSets, reps: '10-15', rest: '60s', muscle: 'Pectoraux' }
           ],
-          duration: '45min',
-          difficulty: 'intermediate'
+          duration: `${duration}min`,
+          difficulty: difficulty
         },
         {
           id: 'day6',
           name: 'Entraînement Core et Flexibilité',
           day: 'Samedi',
           exercises: [
-            { name: 'Planche', sets: 3, reps: '45-60s', rest: '60s', muscle: 'Core' },
-            { name: 'Crunches', sets: 3, reps: '20-25', rest: '45s', muscle: 'Abdominaux' },
+            { name: 'Planche', sets: baseSets, reps: '45-60s', rest: '60s', muscle: 'Core' },
+            { name: 'Crunches', sets: baseSets, reps: '20-25', rest: '45s', muscle: 'Abdominaux' },
             { name: 'Étirements', sets: 1, reps: '10min', rest: '0s', muscle: 'Corps entier' }
           ],
-          duration: '45min',
-          difficulty: 'intermediate'
+          duration: `${duration}min`,
+          difficulty: difficulty
         },
         {
           id: 'day7',
@@ -241,7 +267,7 @@ function generateFallbackWorkout(query: string, workoutType: 'single' | 'weekly'
             { name: 'Yoga doux', sets: 1, reps: '15min', rest: '0s', muscle: 'Corps entier' },
             { name: 'Étirements profonds', sets: 1, reps: '10min', rest: '0s', muscle: 'Corps entier' }
           ],
-          duration: '45min',
+          duration: `${duration}min`,
           difficulty: 'beginner'
         }
       ]
@@ -252,13 +278,13 @@ function generateFallbackWorkout(query: string, workoutType: 'single' | 'weekly'
         id: 'single',
         name: 'Entraînement Complet',
         exercises: [
-          { name: 'Burpees', sets: 3, reps: '10-12', rest: '90s', muscle: 'Corps entier' },
-          { name: 'Pompes', sets: 3, reps: '12-15', rest: '60s', muscle: 'Pectoraux' },
-          { name: 'Squats', sets: 3, reps: '15-20', rest: '60s', muscle: 'Quadriceps' },
-          { name: 'Planche', sets: 3, reps: '30-45s', rest: '60s', muscle: 'Core' }
+          { name: 'Burpees', sets: baseSets, reps: '10-12', rest: '90s', muscle: 'Corps entier' },
+          { name: 'Pompes', sets: baseSets, reps: '12-15', rest: '60s', muscle: 'Pectoraux' },
+          { name: 'Squats', sets: baseSets + 1, reps: '15-20', rest: '60s', muscle: 'Quadriceps' },
+          { name: 'Planche', sets: baseSets, reps: '30-45s', rest: '60s', muscle: 'Core' }
         ],
-        duration: '30min',
-        difficulty: 'intermediate'
+        duration: `${duration}min`,
+        difficulty: difficulty
       }
     }
   }

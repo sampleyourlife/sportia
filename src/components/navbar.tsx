@@ -14,7 +14,7 @@ export function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent hover:from-amber-300 hover:to-yellow-400 transition-all">
-              💪 FitAI
+              🧠 StrategIA
             </Link>
           </div>
 

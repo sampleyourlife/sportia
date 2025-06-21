@@ -6,8 +6,8 @@ import { Providers } from '@/components/providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Sport App',
-  description: 'Application de sport avec Next.js 15, TypeScript, Tailwind CSS, Prisma et NextAuth',
+  title: 'StrategIA',
+  description: 'Application de coaching sportif intelligent avec IA - Next.js 15, TypeScript, Tailwind CSS, Prisma et NextAuth',
 }
 
 export default function RootLayout({
