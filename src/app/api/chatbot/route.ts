@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
         'X-Title': 'FitAI Coach'
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-3.5-sonnet',
+        model: 'qwen/qwen3-14b:free',
         messages: messages,
         max_tokens: 800,
         temperature: 0.8
