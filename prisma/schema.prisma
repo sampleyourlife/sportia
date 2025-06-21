@@ -61,6 +61,7 @@ model User {
   preferences   Json?     // préférences d'entraînement (équipements, horaires, etc.)
   
   profile       UserProfile?
+  metrics       UserMetrics[]
 }
 
 model UserProfile {
@@ -79,6 +80,50 @@ model UserProfile {
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+model UserMetrics {
+  id           String   @id @default(cuid())
+  userId       String
+  date         DateTime @default(now())
+  
+  // Poids et composition corporelle
+  weight       Float?
+  bodyFat      Float?
+  muscleMass   Float?
+  
+  // Mensurations (en cm)
+  chest        Float?
+  waist        Float?
+  hips         Float?
+  biceps       Float?
+  thighs       Float?
+  neck         Float?
+  
+  // Force (poids en kg ou répétitions)
+  benchPress   Float?
+  squat        Float?
+  deadlift     Float?
+  pullUps      Int?
+  pushUps      Int?
+  
+  // Endurance
+  cardioTime   Int?     // minutes
+  distance     Float?   // km
+  vo2Max       Float?
+  restingHR    Int?     // bpm
+  maxHR        Int?     // bpm
+  
+  // Flexibilité et autres
+  flexibility  Json?    // scores de flexibilité par zone
+  notes        String?  // notes personnelles
+  
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@index([userId, date])
 }
 
 enum Gender {

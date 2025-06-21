@@ -25,6 +25,9 @@ export function Navbar() {
                 <Link href="/dashboard" className="text-gray-300 hover:text-amber-400 transition-colors font-medium">
                   Dashboard
                 </Link>
+                <Link href="/metrics" className="text-gray-300 hover:text-amber-400 transition-colors font-medium">
+                  Métriques
+                </Link>
                 <Link href="/profile" className="text-gray-300 hover:text-amber-400 transition-colors font-medium">
                   Profil
                 </Link>
@@ -79,6 +82,13 @@ export function Navbar() {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Dashboard
+                  </Link>
+                  <Link
+                    href="/metrics"
+                    className="block px-3 py-2 text-gray-300 hover:text-amber-400 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Métriques
                   </Link>
                   <Link
                     href="/profile"
