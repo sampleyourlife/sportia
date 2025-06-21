@@ -161,20 +161,22 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="bg-white/5 backdrop-blur-lg rounded-2xl shadow-lg p-6 border border-white/10">
         <div className="flex items-center gap-3 mb-6">
-          <User className="w-6 h-6 text-blue-600" />
-          <h2 className="text-2xl font-bold text-gray-900">Profil Utilisateur Détaillé</h2>
+          <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-full flex items-center justify-center">
+            <User className="w-6 h-6 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-white">Profil Utilisateur Détaillé</h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Informations de base */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Informations de base</h3>
+            <h3 className="text-lg font-semibold text-white border-b border-white/20 pb-2">Informations de base</h3>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Âge</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Âge</label>
                 <input
                   type="number"
                   min="13"
@@ -187,7 +189,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Genre</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Genre</label>
                 <select
                   value={profile.gender || ''}
                   onChange={(e) => handleInputChange('gender', e.target.value || undefined)}
@@ -203,7 +205,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Poids (kg)</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Poids (kg)</label>
                 <input
                   type="number"
                   min="30"
@@ -217,7 +219,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Taille (cm)</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Taille (cm)</label>
                 <input
                   type="number"
                   min="100"
@@ -231,12 +233,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
             </div>
 
             {bmi && (
-              <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="bg-white/5 p-4 rounded-lg border border-white/10">
                 <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-4 h-4 text-gray-600" />
-                  <span className="font-medium text-gray-700">IMC (Indice de Masse Corporelle)</span>
+                  <TrendingUp className="w-4 h-4 text-gray-300" />
+                  <span className="font-medium text-gray-300">IMC (Indice de Masse Corporelle)</span>
                 </div>
-                <div className="text-2xl font-bold text-gray-900">{bmi}</div>
+                <div className="text-2xl font-bold text-white">{bmi}</div>
                 {bmiInfo && (
                   <div className={`text-sm font-medium ${bmiInfo.color}`}>
                     {bmiInfo.category}
@@ -248,13 +250,13 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
 
           {/* Niveau d'expérience */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Expérience et activité</h3>
+            <h3 className="text-lg font-semibold text-white border-b border-white/20 pb-2">Expérience et activité</h3>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">Niveau d'expérience</label>
+              <label className="block text-sm font-medium text-gray-300 mb-3">Niveau d'expérience</label>
               <div className="space-y-2">
                 {experienceLevels.map(level => (
-                  <label key={level.value} className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                  <label key={level.value} className="flex items-start gap-3 p-3 border border-white/20 rounded-lg hover:bg-white/5 cursor-pointer">
                     <input
                       type="radio"
                       name="experienceLevel"
@@ -264,8 +266,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
                       className="mt-1"
                     />
                     <div>
-                      <div className="font-medium text-gray-900">{level.label}</div>
-                      <div className="text-sm text-gray-600">{level.description}</div>
+                      <div className="font-medium text-white">{level.label}</div>
+                      <div className="text-sm text-gray-300">{level.description}</div>
                     </div>
                   </label>
                 ))}
@@ -273,10 +275,10 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">Niveau d'activité actuel</label>
+              <label className="block text-sm font-medium text-gray-300 mb-3">Niveau d'activité actuel</label>
               <div className="space-y-2">
                 {activityLevels.map(level => (
-                  <label key={level.value} className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                  <label key={level.value} className="flex items-start gap-3 p-3 border border-white/20 rounded-lg hover:bg-white/5 cursor-pointer">
                     <input
                       type="radio"
                       name="activityLevel"
@@ -286,8 +288,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
                       className="mt-1"
                     />
                     <div>
-                      <div className="font-medium text-gray-900">{level.label}</div>
-                      <div className="text-sm text-gray-600">{level.description}</div>
+                      <div className="font-medium text-white">{level.label}</div>
+                      <div className="text-sm text-gray-300">{level.description}</div>
                     </div>
                   </label>
                 ))}
@@ -298,13 +300,13 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
 
         {/* Objectifs fitness */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Objectifs fitness (sélection multiple)</h3>
+          <h3 className="text-lg font-semibold text-white border-b border-white/20 pb-2 mb-4">Objectifs fitness (sélection multiple)</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {fitnessGoalOptions.map(goal => (
               <label key={goal.value} className={`flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
                 profile.fitnessGoals.includes(goal.value)
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-blue-400 bg-blue-500/20'
+                  : 'border-white/20 hover:border-white/30 bg-white/5'
               }`}>
                 <input
                   type="checkbox"
@@ -313,7 +315,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
                   className="sr-only"
                 />
                 <span className="text-2xl">{goal.icon}</span>
-                <span className="text-sm font-medium text-gray-900">{goal.label}</span>
+                <span className="text-sm font-medium text-white">{goal.label}</span>
               </label>
             ))}
           </div>
@@ -321,13 +323,13 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
 
         {/* Équipements disponibles */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Équipements disponibles</h3>
+          <h3 className="text-lg font-semibold text-white border-b border-white/20 pb-2 mb-4">Équipements disponibles</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {equipmentOptions.map(equipment => (
               <label key={equipment} className={`flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-all ${
                 profile.preferences?.availableEquipment?.includes(equipment)
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-blue-400 bg-blue-500/20'
+                  : 'border-white/20 hover:border-white/30 bg-white/5'
               }`}>
                 <input
                   type="checkbox"
@@ -335,7 +337,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
                   onChange={() => toggleEquipment(equipment)}
                   className="sr-only"
                 />
-                <span className="text-sm font-medium text-gray-900">{equipment}</span>
+                <span className="text-sm font-medium text-white">{equipment}</span>
               </label>
             ))}
           </div>
@@ -343,10 +345,10 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
 
         {/* Préférences d'entraînement */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Préférences d'entraînement</h3>
+          <h3 className="text-lg font-semibold text-white border-b border-white/20 pb-2 mb-4">Préférences d'entraînement</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Durée préférée (minutes)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Durée préférée (minutes)</label>
               <select
                 value={profile.preferences?.workoutDuration || ''}
                 onChange={(e) => handlePreferenceChange('workoutDuration', parseInt(e.target.value) || undefined)}
@@ -363,7 +365,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Fréquence par semaine</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Fréquence par semaine</label>
               <select
                 value={profile.preferences?.workoutFrequency || ''}
                 onChange={(e) => handlePreferenceChange('workoutFrequency', parseInt(e.target.value) || undefined)}
@@ -381,7 +383,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Moment préféré</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Moment préféré</label>
               <select
                 value={profile.preferences?.preferredWorkoutTime || ''}
                 onChange={(e) => handlePreferenceChange('preferredWorkoutTime', e.target.value || undefined)}
@@ -400,14 +402,14 @@ const UserProfile: React.FC<UserProfileProps> = ({ onProfileUpdate, initialData 
 
         {/* Conditions médicales */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Conditions médicales et limitations</h3>
+          <h3 className="text-lg font-semibold text-white border-b border-white/20 pb-2 mb-4">Conditions médicales et limitations</h3>
           <textarea
             value={profile.medicalConditions || ''}
             onChange={(e) => handleInputChange('medicalConditions', e.target.value || undefined)}
             className="input-field h-24 resize-none"
             placeholder="Mentionnez toute condition médicale, blessure passée ou limitation physique qui pourrait affecter votre entraînement..."
           />
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs text-gray-400 mt-2">
             Ces informations nous aideront à personnaliser vos entraînements en toute sécurité.
           </p>
         </div>
