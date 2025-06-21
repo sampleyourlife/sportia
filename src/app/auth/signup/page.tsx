@@ -55,6 +55,17 @@ export default function SignUp() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="max-w-md w-full space-y-8 p-8">
         <div className="card">
+          <div className="mb-6">
+            <Link 
+              href="/" 
+              className="inline-flex items-center text-blue-600 hover:text-blue-500 font-medium transition-colors"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Retour
+            </Link>
+          </div>
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900">Inscription</h2>
             <p className="mt-2 text-gray-600">Créez votre compte</p>

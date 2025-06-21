@@ -1,4 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import OpenAI from 'openai'
+
+const openai = new OpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY,
+})
 
 interface WorkoutRequest {
   query: string
@@ -12,6 +21,9 @@ interface WorkoutRequest {
 export async function POST(request: NextRequest) {
   let body: WorkoutRequest
   try {
+    // Récupérer la session utilisateur
+    const session = await getServerSession(authOptions)
+    
     body = await request.json()
     const { query, equipment = [], duration = '45', difficulty = 'intermediate', muscleGroups = [], workoutType = 'single' } = body
 
@@ -24,8 +36,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'OpenRouter API key not configured' }, { status: 500 })
     }
 
-    // Construire le prompt pour OpenRouter
-    const prompt = buildWorkoutPrompt(query, equipment, duration, difficulty, muscleGroups, workoutType)
+    // Récupérer le profil utilisateur si connecté
+    let userProfile = null
+    if (session?.user?.email) {
+      try {
+        userProfile = await prisma.user.findUnique({
+          where: { email: session.user.email },
+          include: { profile: true }
+        })
+      } catch (error) {
+        console.log('Erreur lors de la récupération du profil:', error)
+        // Continuer sans le profil si erreur
+      }
+    }
+
+    // Construire le prompt pour OpenRouter avec les données de profil
+    const prompt = buildWorkoutPrompt(query, equipment, duration, difficulty, muscleGroups, workoutType, userProfile || undefined)
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -83,16 +109,98 @@ export async function POST(request: NextRequest) {
   }
 }
 
+interface UserProfile {
+  age?: number | null;
+  gender?: 'MALE' | 'FEMALE' | 'OTHER' | 'PREFER_NOT_TO_SAY' | null;
+  weight?: number | null;
+  height?: number | null;
+  experienceLevel?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT' | null;
+  activityLevel?: 'SEDENTARY' | 'LIGHTLY_ACTIVE' | 'MODERATELY_ACTIVE' | 'VERY_ACTIVE' | 'EXTREMELY_ACTIVE' | null;
+  fitnessGoals?: ('WEIGHT_LOSS' | 'MUSCLE_GAIN' | 'STRENGTH' | 'ENDURANCE' | 'FLEXIBILITY' | 'GENERAL_FITNESS' | 'SPORT_SPECIFIC' | 'REHABILITATION')[] | null;
+  medicalConditions?: string | null;
+}
+
 function buildWorkoutPrompt(
   query: string,
   equipment: string[],
   duration: string,
   difficulty: string,
   muscleGroups: string[],
-  workoutType: 'single' | 'weekly'
+  workoutType: 'single' | 'weekly',
+  userProfile?: UserProfile
 ): string {
   const equipmentText = equipment.length > 0 ? `Équipements disponibles: ${equipment.join(', ')}` : 'Aucun équipement spécifique'
   const muscleText = muscleGroups.length > 0 ? `Groupes musculaires ciblés: ${muscleGroups.join(', ')}` : 'Tous les groupes musculaires'
+  
+  // Construire les informations de profil utilisateur
+  let profileText = ''
+  if (userProfile) {
+    const profileInfo = []
+    
+    if (userProfile.age) profileInfo.push(`Âge: ${userProfile.age} ans`)
+    if (userProfile.gender) {
+      const genderMap = {
+        'MALE': 'Homme',
+        'FEMALE': 'Femme',
+        'OTHER': 'Autre',
+        'PREFER_NOT_TO_SAY': 'Non spécifié'
+      }
+      profileInfo.push(`Genre: ${genderMap[userProfile.gender as keyof typeof genderMap] || userProfile.gender}`)
+    }
+    if (userProfile.weight) profileInfo.push(`Poids: ${userProfile.weight} kg`)
+    if (userProfile.height) profileInfo.push(`Taille: ${userProfile.height} cm`)
+    
+    if (userProfile.experienceLevel) {
+      const experienceMap = {
+        'BEGINNER': 'Débutant (0-6 mois)',
+        'INTERMEDIATE': 'Intermédiaire (6 mois - 2 ans)',
+        'ADVANCED': 'Avancé (2+ ans)',
+        'EXPERT': 'Expert (5+ ans)'
+      }
+      profileInfo.push(`Niveau d'expérience: ${experienceMap[userProfile.experienceLevel as keyof typeof experienceMap] || userProfile.experienceLevel}`)
+    }
+    
+    if (userProfile.activityLevel) {
+      const activityMap = {
+        'SEDENTARY': 'Sédentaire',
+        'LIGHTLY_ACTIVE': 'Légèrement actif',
+        'MODERATELY_ACTIVE': 'Modérément actif',
+        'VERY_ACTIVE': 'Très actif',
+        'EXTREMELY_ACTIVE': 'Extrêmement actif'
+      }
+      profileInfo.push(`Niveau d'activité: ${activityMap[userProfile.activityLevel as keyof typeof activityMap] || userProfile.activityLevel}`)
+    }
+    
+    if (userProfile.fitnessGoals && userProfile.fitnessGoals.length > 0) {
+      const goalMap = {
+        'WEIGHT_LOSS': 'Perte de poids',
+        'MUSCLE_GAIN': 'Prise de masse musculaire',
+        'STRENGTH': 'Gain de force',
+        'ENDURANCE': 'Endurance cardiovasculaire',
+        'FLEXIBILITY': 'Flexibilité et mobilité',
+        'GENERAL_FITNESS': 'Forme générale',
+        'SPORT_SPECIFIC': 'Performance sportive',
+        'REHABILITATION': 'Rééducation'
+      }
+      const goals = userProfile.fitnessGoals.map((goal: string) => goalMap[goal as keyof typeof goalMap] || goal).join(', ')
+      profileInfo.push(`Objectifs: ${goals}`)
+    }
+    
+    if (userProfile.medicalConditions) {
+      profileInfo.push(`Conditions médicales/limitations: ${userProfile.medicalConditions}`)
+    }
+    
+    // Calculer l'IMC si possible
+    if (userProfile.weight && userProfile.height) {
+      const heightInM = userProfile.height / 100
+      const bmi = (userProfile.weight / (heightInM * heightInM)).toFixed(1)
+      profileInfo.push(`IMC: ${bmi}`)
+    }
+    
+    if (profileInfo.length > 0) {
+      profileText = `\n\nPROFIL UTILISATEUR:\n${profileInfo.join('\n')}`
+    }
+  }
   
   if (workoutType === 'weekly') {
     return `Génère un programme d'entraînement hebdomadaire complet de 7 jours basé sur: "${query}"
@@ -101,9 +209,16 @@ Paramètres:
 - Durée par séance: ${duration} minutes
 - Niveau: ${difficulty}
 - ${equipmentText}
-- ${muscleText}
+- ${muscleText}${profileText}
 
 Crée exactement 7 séances d'entraînement, une pour chaque jour de la semaine (Lundi à Dimanche). Varie les groupes musculaires et les types d'exercices pour un programme équilibré.
+
+IMPORTANT: Adapte l'entraînement selon le profil utilisateur:
+- Respecte les objectifs fitness mentionnés
+- Tiens compte du niveau d'expérience et d'activité
+- Adapte l'intensité selon l'âge et la condition physique
+- Évite les exercices contre-indiqués selon les conditions médicales
+- Utilise l'IMC pour ajuster l'intensité cardiovasculaire
 
 Adapte le nombre de sets selon le niveau:
 - Débutant: 2-3 sets
@@ -138,7 +253,14 @@ Paramètres:
 - Durée: ${duration} minutes
 - Niveau: ${difficulty}
 - ${equipmentText}
-- ${muscleText}
+- ${muscleText}${profileText}
+
+IMPORTANT: Adapte l'entraînement selon le profil utilisateur:
+- Respecte les objectifs fitness mentionnés
+- Tiens compte du niveau d'expérience et d'activité
+- Adapte l'intensité selon l'âge et la condition physique
+- Évite les exercices contre-indiqués selon les conditions médicales
+- Utilise l'IMC pour ajuster l'intensité cardiovasculaire
 
 Adapte le nombre de sets selon le niveau:
 - Débutant: 2-3 sets

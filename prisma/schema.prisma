@@ -48,6 +48,70 @@ model User {
   sessions      Session[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  
+  // Profil utilisateur détaillé
+  age           Int?
+  gender        Gender?
+  weight        Float?    // en kg
+  height        Float?    // en cm
+  experienceLevel ExperienceLevel?
+  fitnessGoals  FitnessGoal[]
+  activityLevel ActivityLevel?
+  medicalConditions String? // conditions médicales ou blessures
+  preferences   Json?     // préférences d'entraînement (équipements, horaires, etc.)
+  
+  profile       UserProfile?
+}
+
+model UserProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Mesures corporelles
+  bodyFatPercentage Float?
+  muscleMass    Float?
+  
+  // Historique et progression
+  workoutHistory Json?
+  progressPhotos String[] // URLs des photos de progression
+  measurements  Json?     // tour de taille, bras, etc.
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum ExperienceLevel {
+  BEGINNER      // 0-6 mois
+  INTERMEDIATE  // 6 mois - 2 ans
+  ADVANCED      // 2+ ans
+  EXPERT        // 5+ ans
+}
+
+enum FitnessGoal {
+  WEIGHT_LOSS
+  MUSCLE_GAIN
+  STRENGTH
+  ENDURANCE
+  FLEXIBILITY
+  GENERAL_FITNESS
+  SPORT_SPECIFIC
+  REHABILITATION
+}
+
+enum ActivityLevel {
+  SEDENTARY     // Peu ou pas d'exercice
+  LIGHTLY_ACTIVE // Exercice léger 1-3 jours/semaine
+  MODERATELY_ACTIVE // Exercice modéré 3-5 jours/semaine
+  VERY_ACTIVE   // Exercice intense 6-7 jours/semaine
+  EXTREMELY_ACTIVE // Exercice très intense, travail physique
 }
 
 model VerificationToken {
