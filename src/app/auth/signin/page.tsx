@@ -42,8 +42,8 @@ export default function SignIn() {
       <div className="max-w-md w-full space-y-8 p-8">
         <div className="card">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Connexion</h2>
-            <p className="mt-2 text-gray-600">Connectez-vous à votre compte</p>
+            <h2 className="text-3xl font-bold text-white">Connexion</h2>
+              <p className="mt-2 text-gray-300">Connectez-vous à votre compte</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -54,7 +54,7 @@ export default function SignIn() {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email
               </label>
               <input
@@ -69,7 +69,7 @@ export default function SignIn() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Mot de passe
               </label>
               <input
@@ -93,7 +93,7 @@ export default function SignIn() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-600">
+            <p className="text-gray-300">
               Pas encore de compte ?{' '}
               <Link href="/auth/signup" className="text-blue-600 hover:text-blue-500 font-medium">
                 S'inscrire

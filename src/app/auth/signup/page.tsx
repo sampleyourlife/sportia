@@ -67,8 +67,8 @@ export default function SignUp() {
             </Link>
           </div>
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Inscription</h2>
-            <p className="mt-2 text-gray-600">Créez votre compte</p>
+            <h2 className="text-3xl font-bold text-white">Inscription</h2>
+              <p className="mt-2 text-gray-300">Créez votre compte</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -79,7 +79,7 @@ export default function SignUp() {
             )}
 
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
                 Nom complet
               </label>
               <input
@@ -94,7 +94,7 @@ export default function SignUp() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email
               </label>
               <input
@@ -109,7 +109,7 @@ export default function SignUp() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Mot de passe
               </label>
               <input
@@ -125,7 +125,7 @@ export default function SignUp() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
                 Confirmer le mot de passe
               </label>
               <input
@@ -149,7 +149,7 @@ export default function SignUp() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-600">
+            <p className="text-gray-300">
               Déjà un compte ?{' '}
               <Link href="/auth/signin" className="text-blue-600 hover:text-blue-500 font-medium">
                 Se connecter
